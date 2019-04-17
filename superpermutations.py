@@ -1,6 +1,4 @@
 import numpy as np
-from math import factorial
-from operator import itemgetter
 from time import time
 from util import *
 
@@ -72,7 +70,6 @@ def greedy_tsp_search(matrix):
     assert "matrix is not square", np.shape(matrix)[0] == np.shape(matrix)[1]
 
     size = len(matrix)
-    current_node = None  # start with first permutation
     next_node = 0
     path = []
 

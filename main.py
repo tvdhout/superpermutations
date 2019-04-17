@@ -5,7 +5,7 @@ n = 7
 print("n =", n)
 # Thijs implementation
 start = time()
-thijs_graph = get_graph(n)
+thijs_graph = get_adjacency_matrix(n)
 print('Thijs graph constructed in {} sec'.format(time()-start))
 
 start = time()

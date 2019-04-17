@@ -100,7 +100,6 @@ def index_path_to_string(n, path):
     return string
 
 
-
 def fold_string(string):
     """
     Not sure if this will be used, folds consecutive, equal characters in a string together
