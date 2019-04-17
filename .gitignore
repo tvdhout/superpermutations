@@ -26,6 +26,8 @@ wheels/
 MANIFEST
 
 # PyCharm
+/.idea
+/.idea/*
 .idea/
 .idea/*
 
