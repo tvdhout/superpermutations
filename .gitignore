@@ -90,6 +90,10 @@ ENV/
 env.bak/
 venv.bak/
 
+# Pickle
+*.p
+*/*.p
+
 # Spyder project settings
 .spyderproject
 .spyproject
