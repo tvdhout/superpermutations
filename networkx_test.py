@@ -1,6 +1,5 @@
 import networkx as nx
 from util import *
-from time import time
 
 
 def get_edges(perms):
