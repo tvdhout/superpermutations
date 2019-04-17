@@ -2,7 +2,7 @@ from superpermutations import *
 from networkx_test import *
 
 n = 7
-print("n =",n)
+print("n =", n)
 # Thijs implementation
 start = time()
 thijs_graph = get_graph(n)

@@ -44,20 +44,5 @@ def greedy_networkx(graph: nx.DiGraph):
 if __name__ == '__main__':
     n = 6
 
-    start = time()
     permutations = get_permutations(n)
     edges = get_edges(permutations)
-
-    graph = nx.DiGraph()
-    graph.add_weighted_edges_from(edges)
-    print("Graph constructed in {} sec".format(time()-start))
-
-    # print(graph.edges(data=True))
-    #
-    # print(min(graph.edges(data=True), key=lambda e: e[2].get('weight'))[1])
-
-    # print(graph.edges('231', data=True))
-    start = time()
-    superperm = path_to_string(greedy_networkx(graph))
-    print("Greedy search completed in {} sec".format(time() - start))
-    assert "Not a valid superpermutation", check_string(n, superperm)
