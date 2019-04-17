@@ -1,5 +1,6 @@
 from itertools import permutations as permute
 import string
+from math import factorial
 
 SYMBOLS = string.digits[1:] + string.ascii_uppercase
 
@@ -87,6 +88,17 @@ def path_to_string(path):
     for perm in path[1:]:
         string = merge(string, perm)
     return string
+
+
+def index_path_to_string(n, path):
+    assert factorial(n) == len(path)
+
+    permutations = get_permutations(n)
+    string = permutations[path[0]]
+    for index in path[1:]:
+        string = merge(string, permutations[index])
+    return string
+
 
 
 def fold_string(string):

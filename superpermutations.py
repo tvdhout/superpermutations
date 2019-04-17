@@ -1,4 +1,6 @@
+import numpy as np
 from math import factorial
+from operator import itemgetter
 from time import time
 from util import *
 
@@ -17,22 +19,22 @@ def time_this(f):
     return wrapper
 
 
-def get_graph(n):
+def get_adjacency_matrix(n):
     """
-    Get the weighted, directed graph representation of all permutations of length n in the form of a nested dictionary
-    {perm1 : {perm2 : distance_1_2, perm3 : distance_1_3, ...},
-     perm2 : {perm1 : distance_2_1, ... etc}
+    Get the adjacency matrix corresponding to the graph of permutations. The values in the matrix are the weights
+    of the edges between two permutations (see util.distance_between)
     :param n: 1..n to define all permutations
-    :return: graph representation
+    :return: adjacency matrix representation of graph
     """
-    graph = {}
+    matrix = []
     permutations = get_permutations(n)
     for i, permutation in enumerate(permutations):
-        connections = {}
-        for other_permutation in permutations[:i] + permutations[i+1:]:
-            connections[other_permutation] = distance_between(permutation, other_permutation)
-        graph[permutation] = connections
-    return graph
+        connections = []
+        for other_permutation in permutations:
+            weight = distance_between(permutation, other_permutation)
+            connections.append(weight) if weight > 0 else connections.append(np.inf)
+        matrix.append(connections)
+    return matrix
 
 
 def recursive_superpermutation(n):
@@ -58,47 +60,46 @@ def recursive_superpermutation(n):
 
 
 # @time_this
-def greedy_tsp_search(graph):
+def greedy_tsp_search(matrix):
     """
     Greedy search for a Hamiltonian path through the graph (traveling salesman style)
-    :param graph:
-    :return:
+    graph is represented as adjacency matrix
+    :param matrix:
+    :return: path in the form of a list of indices, visited in order
     """
-    current = list(graph.keys())[0]  # start with first permutation
+    assert "matrix is None", matrix is not None
+    assert "matrix is not 2d ", len(np.shape(matrix)) == 2
+    assert "matrix is not square", np.shape(matrix)[0] == np.shape(matrix)[1]
+
+    size = len(matrix)
+    current_node = None  # start with first permutation
+    next_node = 0
     path = []
 
-    while len(graph) > 1:
-        path.append(current)  # add current permutation to path
-        #  find next node with shortest path
-        next_vertex = min(graph[current], key=graph[current].get)
-        del graph[current]  # remove current from the graph
-        for p in list(graph.keys()):
-            del graph[p][current]
-        current = next_vertex
+    visited = set()  # all indices are yet to be visited
 
-    path.append(current)  # add final node to graph
+    while len(visited) < size:
+        #  find next node with shortest path
+        current_node = next_node
+        path.append(current_node)
+        visited.add(current_node)
+        try:
+            next_node = next(node for node in np.argsort(matrix[current_node]) if node not in visited)
+        except StopIteration:
+            break  # generator empty
+
     return path
 
 
 if __name__ == '__main__':
 
-    n = 6
+    n = 7
+    start = time()
+    matrix = get_adjacency_matrix(n)
+    print("matrix formed in {} secs".format(time()-start))
 
     start = time()
-    g_n = get_graph(n)
-    print('Graph constructed in {} sec'.format(time()-start))
-
-    start = time()
-    print('Applying greedy search to graph')
-    n_path = greedy_tsp_search(g_n)
-    n_string = path_to_string(n_path)
-    print("Greedy search completed in {} sec".format(time()-start))
-    assert "Not a valid superpermutation", check_string(n, n_string)
-    print('Superpermutation for n = {} found with length {}.\
-    \n{}'.format(n, len(n_string), n_string))
-
-    # start = time()
-    # recursive_n8 = recursive_superpermutation(n)
-    # print(time()-start)
-    # # print(is_palindrome(recursive_n8))
-    # print('n=? from recursive algorithm: {}\nlength: {}'.format(recursive_n8, len(recursive_n8)))
+    path = greedy_tsp_search(matrix)
+    superperm = index_path_to_string(n, path)
+    print("greedy search done in {} secs".format(time()-start))
+    print(superperm)
