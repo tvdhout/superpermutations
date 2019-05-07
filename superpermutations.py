@@ -24,14 +24,15 @@ def get_adjacency_matrix(n):
     :param n: 1..n to define all permutations
     :return: adjacency matrix representation of graph
     """
-    matrix = []
+    matrix = {}
     permutations = get_permutations(n)
-    for i, permutation in enumerate(permutations):
-        connections = []
+    for permutation in permutations:
+        connections = {}
         for other_permutation in permutations:
-            weight = distance_between(permutation, other_permutation)
-            connections.append(weight) if weight > 0 else connections.append(np.inf)
-        matrix.append(connections)
+            if(proper_edge(permutation, other_permutation)):
+                weight = distance_between(permutation, other_permutation)
+                connections[other_permutation] = weight
+        matrix[permutation] = connections
     return matrix
 
 
@@ -90,13 +91,22 @@ def greedy_tsp_search(matrix):
 
 if __name__ == '__main__':
 
-    n = 7
+    n = 4
+    print("n =", n)
     start = time()
     matrix = get_adjacency_matrix(n)
     print("matrix formed in {} secs".format(time()-start))
+    print(matrix)
+    #
+    # start = time()
+    # path = greedy_tsp_search(matrix)
+    # superperm = index_path_to_string(n, path)
+    # print("greedy search done in {} secs".format(time()-start))
+    # print(superperm)
+    #
+    # print(proper_edge(p1, p2))
+    # 1234 4312
+    # 1234312
 
-    start = time()
-    path = greedy_tsp_search(matrix)
-    superperm = index_path_to_string(n, path)
-    print("greedy search done in {} secs".format(time()-start))
-    print(superperm)
+    # for x in matrix:
+    #     print(x)

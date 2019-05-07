@@ -64,6 +64,24 @@ def distance_between(p1, p2):
     return len(p1)
 
 
+def proper_edge(p1, p2):
+    """
+    returns True if the edge between permutations p1 and p2 is proper (does not pass through another permutation)
+    :param p1: permutation 1 1234 4321 1234321
+    :param p2: permutation 2
+    :return: edge p1 -> p2 is proper.
+    """
+    assert len(p1) == len(p2), "Permutation lengths must be equal"
+    if p1 == p2:
+        return False
+    l = len(p1)
+    merged = merge(p1, p2)
+    for i in range(1, len(merged)-l):
+        if is_permutation(merged[i:i+l], l):
+            return False
+    return True
+
+
 def merge(s1, s2):
     """
     Merge two strings with largest overlap
