@@ -45,3 +45,7 @@ if __name__ == '__main__':
 
     permutations = get_permutations(n)
     edges = get_edges(permutations)
+    graph = nx.DiGraph()
+    graph.add_nodes_from(permutations)
+    graph.add_edges_from(edges)
+    print(graph)
