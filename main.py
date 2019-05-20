@@ -1,7 +1,7 @@
 from superpermutations import *
 from networkx_test import *
 
-n = 7
+n = 4
 print("n =", n)
 # Thijs implementation
 start = time()
@@ -26,5 +26,7 @@ print("networkx graph constructed in {} sec".format(time()-start))
 
 start = time()
 superperm = path_to_string(greedy_networkx(graph))
+print(superperm)
+print(len(superperm))
 print("networkx greedy search completed in {} sec".format(time() - start))
 assert "Not a valid superpermutation", check_string(n, superperm)

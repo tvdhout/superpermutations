@@ -102,11 +102,11 @@ def greedy_tsp_search(graph):
     return path
 
 
-def solve_ACO(adj_list):
-    epochs = 10
+def solve_aco(adj_list):
+    epochs = 5000
     Ant.graph = adj_list
-    Ant.alpha = .8
-    Ant.beta = .3
+    Ant.alpha = .9
+    Ant.beta = .4
     ants = []
 
     for _ in range(50):
@@ -127,12 +127,14 @@ if __name__ == '__main__':
     print("n =", n)
     start = time()
     adj_list = get_adjacency_list(n)
-    print("list formed in {} secs".format(time() - start))
-    # print(adj_list[0] < adj_list[1])
-    ants = solve_ACO(adj_list)
-    print(ants[0])
-    # superperm = path_to_string(path)
-    # print(superperm)
-    # print(len(superperm))
-    # assert check_string(n, superperm)
 
+    # solve with aco
+    ants = solve_aco(adj_list)
+    path = ants[0].visited
+    superperm = path_to_string(path)
+
+    print("Superperm: {}".format(superperm))
+    print("Length superperm: {}".format(len(superperm)))
+
+    if check_string(n, superperm):
+        print("It is a superperm tho.")
