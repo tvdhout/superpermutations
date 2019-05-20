@@ -108,13 +108,17 @@ def solve_ACO(adj_list):
     Ant.alpha = .8
     Ant.beta = .3
     ants = []
+
     for _ in range(50):
         ants.append(Ant())
+
     for i in range(epochs):
         for ant in ants:
             ant.create_tour()
         pheromone_update(Ant.graph, ants, 0.025)
-    ants = ants.sort(key=lambda a: a.tour_distance)
+
+    ants.sort(key=lambda a: a.tour_distance)
+
     return ants
 
 
