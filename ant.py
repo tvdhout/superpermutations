@@ -32,7 +32,7 @@ class Ant:
         return "length {}, tour {}".format(self.tour_distance, self.visited)
 
     def reset(self):
-        self.current_node = random.choice(self.graph).start_node  # random starting point
+        self.current_node = random.choice(Ant.start_nodes)  # random starting point
         self.visited = [self.current_node]
         self.edge_list = []
         self.tour_distance = 0
@@ -67,20 +67,20 @@ class Ant:
         # print(self.visited)
 
 
-def pheromone_update(graph, ants, p):
+def pheromone_update(graph, ants, decay):
     """
     update the pheromone levels of the ants in the graph
     :param graph: adjacency list
     :param ants: list of all ants traversing the graph
-    :param p: pheromone decay 0 < p <= 1
+    :param decay: pheromone decay 0 < p <= 1
     :return:
     """
-    assert 0 < p <= 1, "Illegal value for pheromone decay"
+    assert 0 < decay <= 1, "Illegal value for pheromone decay"
     # decay
     for edge in graph:
-        edge.pheromone *= (1-p)
+        edge.pheromone *= (1-decay)
     # increase
     for ant in ants:
         for edge in ant.edge_list:
-            edge.pheromone += 1/ant.tour_distance
+            edge.pheromone += 10/ant.tour_distance
     return graph

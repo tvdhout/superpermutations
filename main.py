@@ -19,7 +19,6 @@ assert "Not a valid superpermutation", check_string(n, thijs_superperm)
 start = time()
 permutations = get_permutations(n)
 edges = get_edges(permutations)
-
 graph = nx.DiGraph()
 graph.add_weighted_edges_from(edges)
 print("networkx graph constructed in {} sec".format(time()-start))

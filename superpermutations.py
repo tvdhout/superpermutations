@@ -51,10 +51,12 @@ def get_adjacency_list(n):
     permutations = get_permutations(n)
     for permutation in permutations:
         for other_permutation in permutations:
-            # if proper_edge(permutation, other_permutation):
+            if proper_edge(permutation, other_permutation):
                 weight = distance_between(permutation, other_permutation)
-                edge = Edge(permutation, other_permutation, weight, 1)
-                insort(adjacency_list, edge)
+            else:
+                weight = 1000
+            edge = Edge(permutation, other_permutation, weight, 1)
+            insort(adjacency_list, edge)
     return adjacency_list
 
 
@@ -102,20 +104,20 @@ def greedy_tsp_search(graph):
     return path
 
 
-def solve_aco(adj_list):
-    epochs = 5000
+def solve_aco(adj_list, n_ants=200, n_epochs=5000, alpha=1, beta=2):
+    epochs = n_epochs
     Ant.graph = adj_list
-    Ant.alpha = .9
-    Ant.beta = .4
+    Ant.alpha = alpha
+    Ant.beta = beta
     ants = []
 
-    for _ in range(50):
+    for _ in range(n_ants):
         ants.append(Ant())
 
     for i in range(epochs):
         for ant in ants:
             ant.create_tour()
-        pheromone_update(Ant.graph, ants, 0.025)
+        pheromone_update(Ant.graph, ants, decay=0.005)
 
     ants.sort(key=lambda a: a.tour_distance)
 
@@ -129,12 +131,13 @@ if __name__ == '__main__':
     adj_list = get_adjacency_list(n)
 
     # solve with aco
-    ants = solve_aco(adj_list)
+    ants = solve_aco(adj_list, n_ants=200, n_epochs=5000)
     path = ants[0].visited
     superperm = path_to_string(path)
 
     print("Superperm: {}".format(superperm))
     print("Length superperm: {}".format(len(superperm)))
 
+    assert check_string(n, superperm)
     if check_string(n, superperm):
-        print("It is a superperm tho.")
+        print("It is a superperm.")
