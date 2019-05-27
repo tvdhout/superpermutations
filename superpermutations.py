@@ -4,6 +4,7 @@ from util import *
 from edge import *
 import numpy as np
 from ant import *
+from tqdm import tqdm
 
 
 def time_this(f):
@@ -113,11 +114,12 @@ def solve_aco(adj_list, n_ants=200, n_epochs=5000, alpha=1, beta=2):
 
     for _ in range(n_ants):
         ants.append(Ant())
+    Ant.global_best = np.inf
 
-    for i in range(epochs):
+    for i in tqdm(range(epochs)):
         for ant in ants:
             ant.create_tour()
-        pheromone_update(Ant.graph, ants, decay=0.005)
+        pheromone_update(Ant.graph, ants, decay=0.1)
 
     ants.sort(key=lambda a: a.tour_distance)
 
@@ -125,7 +127,7 @@ def solve_aco(adj_list, n_ants=200, n_epochs=5000, alpha=1, beta=2):
 
 
 if __name__ == '__main__':
-    n = 4
+    n = 5
     print("n =", n)
     start = time()
     adj_list = get_adjacency_list(n)

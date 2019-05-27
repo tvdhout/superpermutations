@@ -11,6 +11,7 @@ class Ant:
     start_nodes = None  # list of all first elements of the graph [x[0] for x in graph]
     alpha = None  # paramater to control influence of pheromone
     beta = None  # parameter to control influence of heuristic information (distance)
+    global_best = None  # shortest tour length of all ants
 
     # instance
     current_node = None
@@ -64,6 +65,8 @@ class Ant:
                                     bisect_right(self.start_nodes, self.current_node)]
             neighbours = [edge for edge in neighbours if edge.end_node not in self.visited]
 
+        if Ant.global_best > self.tour_distance:
+            Ant.global_best = self.tour_distance
         # print(self.visited)
 
 
@@ -76,11 +79,12 @@ def pheromone_update(graph, ants, decay):
     :return:
     """
     assert 0 < decay <= 1, "Illegal value for pheromone decay"
+
     # decay
     for edge in graph:
         edge.pheromone *= (1-decay)
     # increase
     for ant in ants:
         for edge in ant.edge_list:
-            edge.pheromone += 10/ant.tour_distance
+            edge.pheromone += 1/(ant.tour_distance - ant.global_best + 0.1)
     return graph
