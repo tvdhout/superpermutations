@@ -119,7 +119,10 @@ def solve_aco(adj_list, n_ants=200, n_epochs=5000, alpha=1, beta=2):
     for i in tqdm(range(epochs)):
         for ant in ants:
             ant.create_tour()
-        pheromone_update(Ant.graph, ants, decay=0.1)
+        pheromone_update(Ant.graph, ants, decay=0.01)
+        if i < epochs-1:
+            for ant in ants:
+                ant.reset()
 
     ants.sort(key=lambda a: a.tour_distance)
 
@@ -133,11 +136,11 @@ if __name__ == '__main__':
     adj_list = get_adjacency_list(n)
 
     # solve with aco
-    ants = solve_aco(adj_list, n_ants=200, n_epochs=5000)
+    ants = solve_aco(adj_list, n_ants=50, n_epochs=500)
     path = ants[0].visited
     superperm = path_to_string(path)
 
-    print("Superperm: {}".format(superperm))
+    print("\nSuperperm: {}".format(superperm))
     print("Length superperm: {}".format(len(superperm)))
 
     assert check_string(n, superperm)

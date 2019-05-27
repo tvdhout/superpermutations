@@ -67,7 +67,6 @@ class Ant:
 
         if Ant.global_best > self.tour_distance:
             Ant.global_best = self.tour_distance
-        # print(self.visited)
 
 
 def pheromone_update(graph, ants, decay):
