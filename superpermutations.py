@@ -1,26 +1,27 @@
-from time import time
+import time
 from bisect import insort
 from util import *
 from edge import *
-import numpy as np
-from ant import *
+import threading
+import concurrent.futures as executor
 from tqdm import tqdm
+from ant import *
 
 
-def time_this(f):
-    """
-    Decorator to time the execution of a fuction
-    :param f: function to time
-    :return:
-    """
-
-    def wrapper(*args, **kwargs):
-        start = time()
-        result = f(*args, **kwargs)
-        print('Execution time: {:.4f} sec'.format(time() - start))
-        return result
-
-    return wrapper
+# def time_this(f):
+#     """
+#     Decorator to time the execution of a fuction
+#     :param f: function to time
+#     :return:
+#     """
+#
+#     def wrapper(*args, **kwargs):
+#         start = time.time()
+#         result = f(*args, **kwargs)
+#         print('Execution time: {:.4f} sec'.format(time.time() - start))
+#         return result
+#
+#     return wrapper
 
 
 def get_adjacency_matrix(n):
@@ -105,7 +106,7 @@ def greedy_tsp_search(graph):
     return path
 
 
-def solve_aco(adj_list, n_ants=200, n_epochs=5000, alpha=1, beta=2):
+def start_aco(adj_list, n_ants=200, n_epochs=5000, alpha=1, beta=2):
     epochs = n_epochs
     Ant.graph = adj_list
     Ant.alpha = alpha
@@ -116,27 +117,29 @@ def solve_aco(adj_list, n_ants=200, n_epochs=5000, alpha=1, beta=2):
         ants.append(Ant())
     Ant.global_best = np.inf
 
-    for i in tqdm(range(epochs)):
-        for ant in ants:
-            ant.create_tour()
-        pheromone_update(Ant.graph, ants, decay=0.01)
-        if i < epochs-1:
-            for ant in ants:
-                ant.reset()
+    with executor.ProcessPoolExecutor(max_workers=4) as ex:
+        for _ in tqdm(range(epochs)):
+            list(ex.map(make_tour, ants))#, chunksize=n_ants//4):
+            pheromone_update(Ant.graph, ants, decay=0.01)
 
     ants.sort(key=lambda a: a.tour_distance)
 
     return ants
 
 
+def make_tour(ant):
+    ant.reset()
+    ant.create_tour()
+
+
 if __name__ == '__main__':
-    n = 5
+    n = 4
     print("n =", n)
-    start = time()
+    # start = time()
     adj_list = get_adjacency_list(n)
 
     # solve with aco
-    ants = solve_aco(adj_list, n_ants=50, n_epochs=500)
+    ants = start_aco(adj_list, n_ants=50, n_epochs=100)
     path = ants[0].visited
     superperm = path_to_string(path)
 

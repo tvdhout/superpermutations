@@ -68,6 +68,11 @@ class Ant:
         if Ant.global_best > self.tour_distance:
             Ant.global_best = self.tour_distance
 
+    def __eq__(self, other):
+        if other.__class__.__name__ != self.__class__.__name__:
+            return False
+        return self.current_node == other.current_node and self.visited == other.visited
+
 
 def pheromone_update(graph, ants, decay):
     """
