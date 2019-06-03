@@ -32,6 +32,9 @@ class Ant:
     def __str__(self):
         return "length {}, tour {}".format(self.tour_distance, self.visited)
 
+    def __repr__(self):
+        return str(self)
+
     def reset(self):
         self.current_node = random.choice(Ant.start_nodes)  # random starting point
         self.visited = [self.current_node]
@@ -88,7 +91,8 @@ def pheromone_update(graph, ants, decay):
     for edge in graph:
         edge.pheromone *= (1-decay)
     # increase
-    for ant in ants:
+    ants.sort(key=lambda a: a.tour_distance)
+    for ant in ants[:10]:
         for edge in ant.edge_list:
             edge.pheromone += 1/(ant.tour_distance - ant.global_best + 0.1)
-    return graph
+    return ants

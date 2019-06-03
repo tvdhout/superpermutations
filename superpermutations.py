@@ -117,19 +117,20 @@ def start_aco(adj_list, n_ants=200, n_epochs=5000, alpha=1, beta=2):
         ants.append(Ant())
     Ant.global_best = np.inf
 
-    with executor.ProcessPoolExecutor(max_workers=4) as ex:
+    with executor.ProcessPoolExecutor(max_workers=8) as ex:
         for _ in tqdm(range(epochs)):
-            list(ex.map(make_tour, ants))#, chunksize=n_ants//4):
-            pheromone_update(Ant.graph, ants, decay=0.01)
+            ants = list(ex.map(make_tour, ants))
+            ants = pheromone_update(ants[0].graph, ants, decay=0.01)
 
+    print(ants[0].visited)
     ants.sort(key=lambda a: a.tour_distance)
-
     return ants
 
 
 def make_tour(ant):
     ant.reset()
     ant.create_tour()
+    return ant
 
 
 if __name__ == '__main__':
@@ -139,7 +140,7 @@ if __name__ == '__main__':
     adj_list = get_adjacency_list(n)
 
     # solve with aco
-    ants = start_aco(adj_list, n_ants=50, n_epochs=100)
+    ants = start_aco(adj_list, n_ants=50, n_epochs=500)
     path = ants[0].visited
     superperm = path_to_string(path)
 
